@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 //ROUTES
-// app.use('/api/v1/auth', require('./routes/userRoutes'));
+app.use('/api/v1/auth', require('./routes/userRoutes'));
 app.use('/api/v1/recipe', require('./routes/recipeRoutes'));
 app.use('/api/v1/minuta', require('./routes/minutaRoutes'));
 

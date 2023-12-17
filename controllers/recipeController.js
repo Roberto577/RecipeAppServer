@@ -3,11 +3,6 @@
 // const { expressjwt: jwt } = require('express-jwt');
 const recipeModel = require('../models/recipeModel');
 
-// //middleware
-// const requireSingIn = jwt({
-//     secret: process.env.JWT_SECRET, algorithms: ['HS256']
-// })
-
 //Creation recipe
 const createController = async (req,res) => {
     try {
@@ -27,17 +22,20 @@ const createController = async (req,res) => {
         //     });
         // }
 
-        //save user
+        //save recipe
         const recipe = await recipeModel({
             title,
             ingredients,
             preparation,
+            postedBy: req.auth._id,
         }).save();
+        console.log('req',req)
         console.log('recipe',recipe)
 
         return res.status(201).send({
             success: true,
-            message: 'Creation Successfully'
+            message: 'Creation Successfully',
+            recipe
         });
     } catch (error) {
         console.log(error)
@@ -69,6 +67,7 @@ const getAllPostsController = async (req,res) => {
     }
 };
 
+//Details Recipe
 const getRecipe = async (req, res) => {
     try {
         const recipeId = req.params.recipeid; // paso este elemento por la url
@@ -96,6 +95,25 @@ const getRecipe = async (req, res) => {
         });
     }
 };
+
+//Get Recipe by author
+const getUserPostsController = async (req,res) => {
+    try {
+        const userPosts = await recipeModel.find({postedBy: req.auth._id});
+        res.status(200).send({
+            success: true,
+            message: 'user posts',
+            userPosts
+        })
+        console.log('userPosts',userPosts)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success: false,
+            message: 'Error in user POST APi'
+        })
+    }
+}
 
 
 //UpdateUser
@@ -133,4 +151,4 @@ const getRecipe = async (req, res) => {
 //     }
 // }
 
-module.exports = { createController, getAllPostsController, getRecipe};
+module.exports = { createController, getAllPostsController, getRecipe, getUserPostsController};
