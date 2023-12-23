@@ -6,7 +6,7 @@ const recipeModel = require('../models/recipeModel');
 //Creation recipe
 const createController = async (req,res) => {
     try {
-        const {title,ingredients,preparation} = req.body;
+        const {title,ingredients,preparation,image} = req.body;
         console.log(req.body)
         //validation
         if(!title){
@@ -27,6 +27,7 @@ const createController = async (req,res) => {
             title,
             ingredients,
             preparation,
+            image,
             postedBy: req.auth._id,
         }).save();
         console.log('req',req)

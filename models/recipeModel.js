@@ -7,12 +7,17 @@ const recipeSchema = new mongoose.Schema({
         trim: true,
     },
     ingredients: {
-        type: [String], // array de strings
+        type: String,
         required: [true, 'please add ingredients'],
         trim: true,
     },
     preparation: {
         type: String,
+        required: false,
+        trim: true,
+    },
+    image: {
+        type: String, // almacena la URL de la imagen
         required: false,
         trim: true,
     },
