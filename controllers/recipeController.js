@@ -1,51 +1,50 @@
-// const JWT = require('jsonwebtoken');
-// const { hashPassword, comparePassword } = require("../helpers/authHelper");
-// const { expressjwt: jwt } = require('express-jwt');
 const recipeModel = require('../models/recipeModel');
+const { uploadImage } = require('../config/cloudinary');
+const fs = require('fs-extra');
 
-//Creation recipe
-const createController = async (req,res) => {
-    try {
-        const {title,ingredients,preparation,image} = req.body;
-        console.log(req.body)
-        //validation
-        if(!title){
-            return res.status(400).send({
+
+// Controlador para crear una nueva receta con imagen
+const createController = async (req, res) => {
+        try {
+            const { title, ingredients, preparation } = req.body;
+
+            // Crea una nueva receta
+            const recipe = recipeModel({
+                title,
+                ingredients,
+                preparation,
+                postedBy: req.auth._id,
+            });
+
+            //Si existe una imagen ejecuta la subida de la imagen
+            if(req.files?.image){
+                const result = await uploadImage(req.files.image.tempFilePath)
+                recipe.image = {
+                    public_id: result.public_id,
+                    urlImage: result.url
+                }
+                // y posterior eleiminación de la imagen de forma local
+                // almancenando solo la url en la db
+                await fs.unlink(req.files.image.tempFilePath)
+
+            }
+
+            // almacena en la db
+            const recipeStored = await recipe.save();
+
+            return res.status(201).json({
+                success: true,
+                message: 'Recipe created successfully',
+                recipeStored,
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
                 success: false,
-                message: 'title is required'
+                message: 'Error creating recipe',
+                error,
             });
         }
-        // if(ingredients.length === 0){
-        //     return res.status(400).send({
-        //         success: false,
-        //         message: 'ingredients is required'
-        //     });
-        // }
-
-        //save recipe
-        const recipe = await recipeModel({
-            title,
-            ingredients,
-            preparation,
-            image,
-            postedBy: req.auth._id,
-        }).save();
-        console.log('req',req)
-        console.log('recipe',recipe)
-
-        return res.status(201).send({
-            success: true,
-            message: 'Creation Successfully',
-            recipe
-        });
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
-            success: false,
-            message: 'Error in creation API',
-            error,
-        });
-    }
 };
 
 //GET ALL POSTS

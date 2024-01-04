@@ -17,9 +17,8 @@ const recipeSchema = new mongoose.Schema({
         trim: true,
     },
     image: {
-        type: String, // almacena la URL de la imagen
-        required: false,
-        trim: true,
+        public_id: String,
+        urlImage: String
     },
     postedBy: {
         type: mongoose.Schema.ObjectId,
@@ -29,5 +28,9 @@ const recipeSchema = new mongoose.Schema({
 },
     { timestamps: true }
 );
+
+// recipeSchema.methods.setImage = function setImage(imageCloud) {
+//     this.image = `${imageCloud}`
+// }
 
 module.exports = mongoose.model('Recipe', recipeSchema)
