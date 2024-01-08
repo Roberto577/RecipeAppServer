@@ -19,9 +19,12 @@ const createController = async (req, res) => {
             //Si existe una imagen ejecuta la subida de la imagen
             if(req.files?.image){
                 const result = await uploadImage(req.files.image.tempFilePath)
+                console.log('tempFilePath',req.files.image.tempFilePath)
+                console.log('req.files.image',req.files.image)
+                console.log('result',result)
                 recipe.image = {
                     public_id: result.public_id,
-                    urlImage: result.url
+                    urlImage: result.secure_url,
                 }
                 // y posterior eleiminación de la imagen de forma local
                 // almancenando solo la url en la db

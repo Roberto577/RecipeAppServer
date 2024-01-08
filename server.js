@@ -15,7 +15,11 @@ connectDB();
 const app = express();
 
 //MIDDLEWARES
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: 'GET,PUT,POST,DELETE',
+    credentials: true,
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -39,9 +43,3 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server Running ${PORT}`.bgGreen.white)
 })
-
-
-
-//Credential
-// robertoandres958
-// qK4UCoHgrTAkcUUa
