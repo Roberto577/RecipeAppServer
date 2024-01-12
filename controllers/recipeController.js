@@ -3,11 +3,24 @@ const { uploadImage } = require('../config/cloudinary');
 const fs = require('fs-extra');
 
 
-// Controlador para crear una nueva receta con imagen
+// Controlador para crear una nueva receta con o sin imagen
 const createController = async (req, res) => {
         try {
             const { title, ingredients, preparation } = req.body;
 
+            //validation
+            if(!title){
+                return res.status(500).send({
+                    success: false,
+                    message: 'Por favor añade un titulo'
+                })
+            }
+            if(!ingredients || ingredients.length === 0){
+                return res.status(500).send({
+                    success: false,
+                    message: 'Por favor añade minimo un ingrediente'
+                })
+            }
             // Crea una nueva receta
             const recipe = recipeModel({
                 title,
@@ -17,7 +30,7 @@ const createController = async (req, res) => {
             });
 
             //Si existe una imagen ejecuta la subida de la imagen
-            if(req.files?.image){
+            if(req.files && req.files.image){
                 const result = await uploadImage(req.files.image.tempFilePath)
                 console.log('tempFilePath',req.files.image.tempFilePath)
                 console.log('req.files.image',req.files.image)
@@ -154,4 +167,22 @@ const getUserPostsController = async (req,res) => {
 //     }
 // }
 
-module.exports = { createController, getAllPostsController, getRecipe, getUserPostsController};
+const deleteRecipeController = async (req,res) => {
+    try {
+        const {id} = req.params;
+        console.log('id',id)
+        await recipeModel.findByIdAndDelete({_id:id});
+        res.status(200).send({
+            success: true,
+            message: 'Tu receta ha sido eliminada',
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success: false,
+            message: 'Error in delete post API'
+        })
+    }
+};
+
+module.exports = { createController, getAllPostsController, getRecipe, getUserPostsController, deleteRecipeController};

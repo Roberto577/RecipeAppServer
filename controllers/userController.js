@@ -72,7 +72,6 @@ const loginController = async (req,res) => {
 
         //validation
         if(!email || !password){
-            console.log('vacio')
             return res.status(500).send({
                 success: false,
                 message: 'Please provide Email or Password'

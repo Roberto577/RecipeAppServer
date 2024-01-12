@@ -2,7 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 
 const { requireSingIn } = require('../controllers/userController');
-const { createController, getAllPostsController, getRecipe, getUserPostsController } = require('../controllers/recipeController');
+const { createController, getAllPostsController, getRecipe, getUserPostsController, deleteRecipeController } = require('../controllers/recipeController');
 
 
 //ROUTER OBJECT
@@ -26,5 +26,8 @@ router.get('/get-recipe/:recipeid', getRecipe);
 
 //GET RECIPE BY AUTHOR
 router.get('/get-user-recipes', requireSingIn, getUserPostsController);
+
+//DELETE
+router.delete('/delete-recipe/:id', requireSingIn, deleteRecipeController);
 
 module.exports = router;
