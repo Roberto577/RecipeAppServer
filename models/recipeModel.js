@@ -7,9 +7,17 @@ const recipeSchema = new mongoose.Schema({
         trim: true,
     },
     ingredients: {
-        type: [String],
+        type: [{
+            name: {
+                type: String,
+                trim: true,
+            },
+            category: {
+                type: String,
+                trim: true,
+            },
+        }],
         required: [true, 'please add ingredients'],
-        trim: true,
     },
     // preparation: {
     //     type: String,
