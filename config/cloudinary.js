@@ -16,4 +16,4 @@ async function deleteImage(publicId) {
     return await cloudinary.uploader.destroy(publicId)
 }
 
-module.exports = { uploadImage };
+module.exports = { uploadImage, deleteImage };

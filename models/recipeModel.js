@@ -7,19 +7,19 @@ const recipeSchema = new mongoose.Schema({
         trim: true,
     },
     ingredients: {
-        type: String,
+        type: [String],
         required: [true, 'please add ingredients'],
         trim: true,
     },
-    preparation: {
-        type: String,
-        required: false,
-        trim: true,
-    },
-    image: {
-        public_id: String,
-        urlImage: String
-    },
+    // preparation: {
+    //     type: String,
+    //     required: false,
+    //     trim: true,
+    // },
+    // image: {
+    //     public_id: String,
+    //     urlImage: String
+    // },
     postedBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',

@@ -1,12 +1,12 @@
 const recipeModel = require('../models/recipeModel');
-const { uploadImage } = require('../config/cloudinary');
+const { uploadImage, deleteImage } = require('../config/cloudinary');
 const fs = require('fs-extra');
 
 
 // Controlador para crear una nueva receta con o sin imagen
 const createController = async (req, res) => {
         try {
-            const { title, ingredients, preparation } = req.body;
+            const { title, ingredients } = req.body;
 
             //validation
             if(!title){
@@ -25,25 +25,8 @@ const createController = async (req, res) => {
             const recipe = recipeModel({
                 title,
                 ingredients,
-                preparation,
                 postedBy: req.auth._id,
             });
-
-            //Si existe una imagen ejecuta la subida de la imagen
-            if(req.files && req.files.image){
-                const result = await uploadImage(req.files.image.tempFilePath)
-                console.log('tempFilePath',req.files.image.tempFilePath)
-                console.log('req.files.image',req.files.image)
-                console.log('result',result)
-                recipe.image = {
-                    public_id: result.public_id,
-                    urlImage: result.secure_url,
-                }
-                // y posterior eleiminación de la imagen de forma local
-                // almancenando solo la url en la db
-                await fs.unlink(req.files.image.tempFilePath)
-
-            }
 
             // almacena en la db
             const recipeStored = await recipe.save();
@@ -171,7 +154,20 @@ const deleteRecipeController = async (req,res) => {
     try {
         const {id} = req.params;
         console.log('id',id)
-        await recipeModel.findByIdAndDelete({_id:id});
+        const recipeDelete = await recipeModel.findByIdAndDelete({_id:id});
+
+        //Si no se encuentra el id en la lista
+        if(!recipeDelete) return res.status(404).json({
+            success: false,
+            message: 'Receta no existe',
+        });
+
+        //Si existe una imagen la borra
+        if(recipeDelete.image?.public_id){
+            await deleteImage(recipeDelete.image.public_id)
+        }
+        console.log('recipeDelete',recipeDelete)
+
         res.status(200).send({
             success: true,
             message: 'Tu receta ha sido eliminada',

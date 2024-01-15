@@ -27,7 +27,7 @@ router.get('/get-recipe/:recipeid', getRecipe);
 //GET RECIPE BY AUTHOR
 router.get('/get-user-recipes', requireSingIn, getUserPostsController);
 
-//DELETE
+//DELETE RECIPE
 router.delete('/delete-recipe/:id', requireSingIn, deleteRecipeController);
 
 module.exports = router;
