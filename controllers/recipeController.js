@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 // Controlador para crear una nueva receta con o sin imagen
 const createController = async (req, res) => {
         try {
-            const { title, ingredients } = req.body;
+            const { title, ingredients, category } = req.body;
 
             //validation
             if(!title){
@@ -25,6 +25,7 @@ const createController = async (req, res) => {
             const recipe = recipeModel({
                 title,
                 ingredients,
+                category,
                 postedBy: req.auth._id,
             });
 
