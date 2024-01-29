@@ -8,60 +8,16 @@ const minutaModel = require('../models/minutaModel');
 //     secret: process.env.JWT_SECRET, algorithms: ['HS256']
 // })
 
-//Creation recipe
+//Creation minuta
 const createController = async (req,res) => {
     try {
-        const {selectedRecipes} = req.body;
-        const Lunes = selectedRecipes.Lunes;
-        const Martes = selectedRecipes.Martes;
-        const Miercoles = selectedRecipes.Miercoles;
-        const Jueves = selectedRecipes.Jueves;
-        const Viernes = selectedRecipes.Viernes;
-        const Sabado = selectedRecipes.Sabado;
-        const Domingo = selectedRecipes.Domingo;
-        
-        console.log('selectedRecipes',selectedRecipes)
+        const {rangoFecha,dias} = req.body;        
         //validation
-        if(selectedRecipes.Lunes.title == null){
-            return res.status(400).send({
-                success: false,
-                message: 'Lunes is required'
-            });
-        }
-        if(selectedRecipes.Martes.title == null){
-            return res.status(400).send({
-                success: false,
-                message: 'Martes is required'
-            });
-        }
-        if(selectedRecipes.Miercoles.title == null){
-            return res.status(400).send({
-                success: false,
-                message: 'Miercoles is required'
-            });
-        }
-        if(selectedRecipes.Jueves.title == null){
-            return res.status(400).send({
-                success: false,
-                message: 'Jueves is required'
-            });
-        }
-        if(selectedRecipes.Viernes.title == null){
-            return res.status(400).send({
-                success: false,
-                message: 'Viernes is required'
-            });
-        }
 
         //save minuta
         const minuta = await minutaModel({
-            Lunes,
-            Martes,
-            Miercoles,
-            Jueves,
-            Viernes,
-            Sabado,
-            Domingo,
+            rangoFecha,
+            dias
         }).save();
 
         return res.status(201).send({
