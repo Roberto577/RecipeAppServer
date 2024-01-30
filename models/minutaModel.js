@@ -10,6 +10,11 @@ const minutaSchema = new mongoose.Schema({
         type: Object,
         required: true,
     },
+    postedBy: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        require: true,
+    },
 },
     { timestamps: true }
 );

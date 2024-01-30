@@ -3,6 +3,9 @@
 // const { expressjwt: jwt } = require('express-jwt');
 const minutaModel = require('../models/minutaModel');
 
+const { format, startOfWeek, endOfWeek } = require('date-fns');
+const { es } = require('date-fns/locale');
+
 // //middleware
 // const requireSingIn = jwt({
 //     secret: process.env.JWT_SECRET, algorithms: ['HS256']
@@ -17,7 +20,8 @@ const createController = async (req,res) => {
         //save minuta
         const minuta = await minutaModel({
             rangoFecha,
-            dias
+            dias,
+            postedBy: req.auth._id,
         }).save();
 
         return res.status(201).send({
@@ -34,6 +38,55 @@ const createController = async (req,res) => {
         });
     }
 };
+
+//Get minuta by author and equals Date
+//Solo envia las minutas que sean del author y que ademas tenga el mismo rango de fecha
+const getUserMinutaByAuthorAndEqualsDateController = async (req, res) => {
+    try {
+        // Calcula el rango de fechas de la semana actual
+        // Obtener la fecha actual
+        const currentDate = new Date();
+    
+        // Obtener el inicio y fin de la semana actual
+        const options = { weekStartsOn: 1 }; // 1 indica que la semana debe comenzar en lunes
+        const startDate = startOfWeek(currentDate, options);
+        const endDate = endOfWeek(currentDate, options);
+    
+        // Formatear las fechas en el formato deseado
+        const formattedStartDate = format(startDate, 'd MMM. yyyy', { locale: es });
+        const formattedEndDate = format(endDate, 'd MMM. yyyy', { locale: es });
+    
+        // Crear el texto del rango de fechas de la semana
+        const calculatedWeekDateRange = `Semana ${formattedStartDate} - ${formattedEndDate}`;
+
+        // Busca todas las minutas del usuario
+        const userMinutas = await minutaModel.find({ postedBy: req.auth._id });
+
+        // Filtra las minutas para obtener solo la de la semana actual
+        const minutaSemanaActual = userMinutas.find(minuta => minuta.rangoFecha === calculatedWeekDateRange);
+
+        if (minutaSemanaActual) {
+            res.status(200).send({
+                success: true,
+                message: 'Minuta de la semana actual encontrada',
+                minutaSemanaActual
+            });
+        } else {
+            res.status(200).send({
+                success: true,
+                message: 'No se encontró ninguna minuta para la semana actual',
+                minutaSemanaActual: {}
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({
+            success: false,
+            message: 'Error en la API al obtener la minuta del usuario'
+        });
+    }
+};
+
 
 //GET ALL POSTS
 // const getAllPostsController = async (req,res) => {
@@ -83,4 +136,4 @@ const createController = async (req,res) => {
 //     }
 // };
 
-module.exports = { createController};
+module.exports = { createController, getUserMinutaByAuthorAndEqualsDateController };
