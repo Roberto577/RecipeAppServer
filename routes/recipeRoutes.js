@@ -10,13 +10,7 @@ const router = express.Router();
 
 //ROUTES
 // POST || CREATE
-router.post('/create-recipe',
-    requireSingIn,
-    fileUpload({
-        useTempFiles: true,
-        tempFileDir: './uploads'
-    }),
-    createController);
+router.post('/create-recipe', requireSingIn, createController);
 
 // GET POSTS
 router.get('/get-recipes', getAllPostsController);

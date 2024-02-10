@@ -1,7 +1,4 @@
 const recipeModel = require('../models/recipeModel');
-const { uploadImage, deleteImage } = require('../config/cloudinary');
-const fs = require('fs-extra');
-
 
 // Controlador para crear una nueva receta con o sin imagen
 const createController = async (req, res) => {
@@ -114,7 +111,6 @@ const getUserPostsController = async (req,res) => {
         })
     }
 }
-
 
 //UpdateUser
 // const updateUserController = async (req,res) => {
